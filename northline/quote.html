@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Design Preview · Northline Renovations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --green:#1f6f5c; --green-d:#174f42; --ink:#1d2421; --muted:#66706b; --line:#dfe5e2; --bg:#f6f8f7; --card:#fff; --red:#c8433a; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Inter,system-ui,sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--green); color:#fff; padding:28px 16px 64px; text-align:center; }
+  header .brand { font-weight:700; letter-spacing:.04em; font-size:13px; text-transform:uppercase; opacity:.85; }
+  header h1 { font-size:28px; line-height:1.2; margin:10px auto 8px; max-width:520px; }
+  header p { margin:0 auto; max-width:460px; opacity:.9; }
+  main { max-width:560px; margin:-44px auto 40px; padding:0 16px; }
+  .card { background:var(--card); border-radius:14px; box-shadow:0 6px 24px rgba(0,0,0,.07); padding:22px; }
+  .step { display:flex; gap:10px; align-items:center; font-weight:600; margin:18px 0 10px; }
+  .step:first-child { margin-top:0; }
+  .num { width:26px; height:26px; border-radius:50%; background:var(--green); color:#fff; display:grid; place-items:center; font-size:13px; flex:none; }
+  label { display:block; font-size:13px; color:var(--muted); margin:10px 0 4px; }
+  input[type=text], input[type=email], textarea { width:100%; padding:12px; border:1px solid var(--line); border-radius:10px; font:inherit; background:#fff; }
+  textarea { min-height:70px; resize:vertical; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:420px){ .row { grid-template-columns:1fr; } }
+  .drop { border:2px dashed var(--line); border-radius:12px; padding:18px; text-align:center; cursor:pointer; color:var(--muted); }
+  .drop img { max-width:100%; border-radius:8px; display:block; margin:0 auto; }
+  .rec { display:flex; align-items:center; gap:14px; padding:14px; border:1px solid var(--line); border-radius:12px; }
+  .mic { width:56px; height:56px; border-radius:50%; border:none; background:var(--green); color:#fff; cursor:pointer; flex:none; display:grid; place-items:center; }
+  .mic.on { background:var(--red); animation:pulse 1.2s infinite; }
+  @keyframes pulse { 50% { box-shadow:0 0 0 10px rgba(200,67,58,.15); } }
+  .rec small { color:var(--muted); display:block; }
+  .rec audio { width:100%; margin-top:6px; }
+  .hint { font-size:13px; color:var(--muted); margin:6px 0 0; }
+  button.go { width:100%; margin-top:20px; padding:15px; border:none; border-radius:10px; background:var(--green); color:#fff; font:600 16px Inter,sans-serif; cursor:pointer; }
+  button.go:disabled { opacity:.5; cursor:default; }
+  .err { color:var(--red); font-size:14px; margin-top:10px; min-height:1em; }
+  .done { text-align:center; padding:30px 10px; }
+  .done .tick { width:64px; height:64px; border-radius:50%; background:#e6f2ee; color:var(--green); display:grid; place-items:center; margin:0 auto 14px; font-size:30px; }
+  .fine { text-align:center; font-size:12px; color:var(--muted); margin-top:14px; }
+  .link { background:none; border:none; color:var(--green); cursor:pointer; font:inherit; padding:0; text-decoration:underline; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Northline Renovations</div>
+  <h1>See your new space before you spend a dollar</h1>
+  <p>Send a photo and a quick voice note. If it's a project we can take on, we'll email you a first-look redesign.</p>
+</header>
+<main>
+  <div class="card" id="formCard">
+    <div class="step"><span class="num">1</span>Snap the room</div>
+    <div class="drop" id="drop">
+      <div id="dropText">Tap to take or choose a photo</div>
+      <img id="preview" alt="" hidden>
+    </div>
+    <input type="file" id="photo" accept="image/*" hidden>
+
+    <div class="step"><span class="num">2</span>Tell us what you want</div>
+    <div class="rec">
+      <button class="mic" id="mic" aria-label="Record voice note">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+      </button>
+      <div style="flex:1;min-width:0">
+        <strong id="recLabel">Tap to record (up to 60s)</strong>
+        <small id="recSub">What do you want changed, when you'd like to start, and a rough budget.</small>
+        <audio id="playback" controls hidden></audio>
+      </div>
+    </div>
+    <p class="hint">Rather type? <button class="link" id="typeToggle" type="button">Write it instead</button></p>
+    <textarea id="project" placeholder="e.g. Open up the kitchen, white cabinets, an island. Hoping to start this spring, budget around $60k." hidden></textarea>
+
+    <div class="step"><span class="num">3</span>Where should we send it?</div>
+    <label for="name">First name</label>
+    <input type="text" id="name" autocomplete="given-name">
+    <div class="row">
+      <div><label for="email">Email</label><input type="email" id="email" autocomplete="email"></div>
+      <div><label for="postal">Postal code</label><input type="text" id="postal" autocomplete="postal-code" maxlength="7"></div>
+    </div>
+
+    <button class="go" id="send">Get my free first look</button>
+    <div class="err" id="err"></div>
+    <p class="fine">Concept images only, not a quote. We serve the Greater Toronto Area.</p>
+  </div>
+
+  <div class="card done" id="doneCard" hidden>
+    <div class="tick">✓</div>
+    <h2 style="margin:0 0 8px">Thanks! Check your email in a few minutes.</h2>
+    <p style="color:var(--muted);margin:0">We've got your photo and message. Marco will be in touch.</p>
+  </div>
+</main>
+
+<script>
+// ---- settings (match the Validate node in n8n) ----
+const WEBHOOK = 'https://aifornoncoders.app.n8n.cloud/webhook/stl-quote';
+const QUOTE_KEY = 'nlr-quote-7f3k';
+const MAX_SECONDS = 60;
+
+const $ = function (id) { return document.getElementById(id); };
+let photoBlob = null, voiceBlob = null, recorder = null, chunks = [], timer = null, started = 0;
+
+// Photo: re-encode to JPEG (handles HEIC on iPhone, shrinks big photos)
+$('drop').onclick = function () { $('photo').click(); };
+$('photo').onchange = async function (e) {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const bmp = await createImageBitmap(f);
+    const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    photoBlob = await new Promise(function (r) { c.toBlob(r, 'image/jpeg', 0.86); });
+  } catch (err) { photoBlob = f; }
+  $('preview').src = URL.createObjectURL(photoBlob); $('preview').hidden = false; $('dropText').hidden = true;
+};
+
+// Voice note
+function pickType() {
+  const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'];
+  for (const t of types) if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) return t;
+  return '';
+}
+async function startRec() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const type = pickType();
+    recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+    chunks = [];
+    recorder.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+    recorder.onstop = function () {
+      stream.getTracks().forEach(function (t) { t.stop(); });
+      voiceBlob = new Blob(chunks, { type: (recorder.mimeType || 'audio/webm').split(';')[0] });
+      $('playback').src = URL.createObjectURL(voiceBlob); $('playback').hidden = false;
+      $('recLabel').textContent = 'Got it. Tap to re-record';
+      $('mic').classList.remove('on'); clearInterval(timer);
+    };
+    recorder.start(); started = Date.now(); $('mic').classList.add('on');
+    timer = setInterval(function () {
+      const s = Math.floor((Date.now() - started) / 1000);
+      $('recLabel').textContent = 'Recording… ' + s + 's (tap to stop)';
+      if (s >= MAX_SECONDS) recorder.stop();
+    }, 250);
+  } catch (err) {
+    $('err').textContent = 'Microphone not available. You can type your message instead.';
+    $('project').hidden = false;
+  }
+}
+$('mic').onclick = function () { if (recorder && recorder.state === 'recording') recorder.stop(); else startRec(); };
+$('typeToggle').onclick = function () { $('project').hidden = !$('project').hidden; };
+
+// Submit
+$('send').onclick = async function () {
+  $('err').textContent = '';
+  const email = $('email').value.trim(), text = $('project').value.trim();
+  if (!photoBlob) return ($('err').textContent = 'Please add a photo of the room.');
+  if (!voiceBlob && text.length < 5) return ($('err').textContent = 'Please record a voice note or type a few words.');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return ($('err').textContent = 'Please enter a valid email.');
+  const fd = new FormData();
+  fd.append('key', QUOTE_KEY);
+  fd.append('name', $('name').value.trim());
+  fd.append('email', email);
+  fd.append('postal', $('postal').value.trim());
+  fd.append('project', text);
+  fd.append('photo', photoBlob, 'room.jpg');
+  if (voiceBlob) fd.append('voice', voiceBlob, 'voice.' + (voiceBlob.type.indexOf('mp4') > -1 ? 'm4a' : voiceBlob.type.indexOf('ogg') > -1 ? 'ogg' : 'webm'));
+  $('send').disabled = true; $('send').textContent = 'Sending…';
+  try {
+    const r = await fetch(WEBHOOK, { method: 'POST', body: fd });
+    const j = await r.json().catch(function () { return {}; });
+    if (!r.ok || !j.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    $('formCard').hidden = true; $('doneCard').hidden = false; window.scrollTo(0, 0);
+  } catch (err) {
+    $('err').textContent = 'Something went wrong (' + err.message + '). Please try again.';
+    $('send').disabled = false; $('send').textContent = 'Get my free first look';
+  }
+};
+</script>
+</body>
+</html>
